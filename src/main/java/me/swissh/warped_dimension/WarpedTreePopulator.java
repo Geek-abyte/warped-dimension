@@ -16,6 +16,23 @@ public class WarpedTreePopulator extends BlockPopulator {
 
     @Override
     public void populate(@NotNull WorldInfo worldInfo, @NotNull Random random, int chunkX, int chunkZ, @NotNull LimitedRegion limitedRegion) {
+        // Only populate in the warped dimension
+        if (!worldInfo.getName().equals("warped_dimension")) {
+            return;
+        }
+
+        // Check if this chunk should have warped forest trees
+        int centerX = chunkX * 16 + 8;
+        int centerZ = chunkZ * 16 + 8;
+        
+        // Use the biome provider to determine biome type
+        WarpedBiomeProvider biomeProvider = new WarpedBiomeProvider();
+        WarpedBiomes biomeType = biomeProvider.getWarpedBiomeType(centerX, centerZ, worldInfo.getSeed());
+
+        if (biomeType != WarpedBiomes.WARPED_FOREST) {
+            return;
+        }
+
         // Generate warped trees randomly
         int worldX = chunkX * 16;
         int worldZ = chunkZ * 16;

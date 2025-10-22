@@ -2,3 +2,15 @@ name: warped_dimension
 version: '1.0-SNAPSHOT'
 main: me.swissh.warped_dimension.Warped_dimension
 api-version: '1.21'
+
+commands:
+  warped:
+    description: Teleport to the Warped Dimension
+    usage: /<command>
+    permission: warped.teleport
+    permission-message: You don't have permission to use this command!
+
+permissions:
+  warped.teleport:
+    description: Allows teleportation to the Warped Dimension
+    default: true

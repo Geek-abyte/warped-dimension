@@ -21,38 +21,39 @@ public class WarpedMobSpawnListener implements Listener {
         }
 
         EntityType type = event.getEntityType();
+        CreatureSpawnEvent.SpawnReason reason = event.getSpawnReason();
 
-        // Allow endermen
+        // Allow endermen to spawn naturally
         if (type == EntityType.ENDERMAN) {
             return;
         }
 
-        // Allow warden with 0.02% chance (1 in 5000)
+        // Allow warden with 0.02% chance (1 in 5000) for natural/spawner spawns
         if (type == EntityType.WARDEN) {
-            if (random.nextDouble() > 0.0002) {
-                event.setCancelled(true);
+            if (reason == CreatureSpawnEvent.SpawnReason.NATURAL ||
+                    reason == CreatureSpawnEvent.SpawnReason.SPAWNER) {
+                if (random.nextDouble() > 0.0002) {
+                    event.setCancelled(true);
+                }
             }
             return;
         }
 
-        // Allow cows and convert to cold variant
-        if (type == EntityType.COW) {
-            // Schedule conversion to cold variant after spawn
-            if (event.getEntity() instanceof Cow cow) {
+        // Handle passive mob spawning - convert to cold variants
+        if (type == EntityType.COW || type == EntityType.CHICKEN) {
+            // Allow all spawn reasons but convert to cold variants
+            if (type == EntityType.COW && event.getEntity() instanceof Cow cow) {
                 cow.setVariant(Cow.Variant.COLD);
-            }
-            return;
-        }
-
-        // Allow chickens and convert to cold variant
-        if (type == EntityType.CHICKEN) {
-            if (event.getEntity() instanceof Chicken chicken) {
+            } else if (type == EntityType.CHICKEN && event.getEntity() instanceof Chicken chicken) {
                 chicken.setVariant(Chicken.Variant.COLD);
             }
-            return;
+            return; // Allow the spawn
         }
 
-        // Cancel all other mob spawns
-        event.setCancelled(true);
+        // Cancel all other mob spawns except natural passive mobs
+        if (reason != CreatureSpawnEvent.SpawnReason.NATURAL) {
+            event.setCancelled(true);
+        }
     }
+
 }
